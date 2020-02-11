@@ -21,7 +21,7 @@ const Consumer = props => {
 
 test('renders with theme context', () => {
   const root = render(wrapRootElement({ element: <Consumer /> }, {}))
-  expect(context.theme).toEqual({
+  expect(context.theme).toMatchObject({
     colors: {},
   })
 })
@@ -32,8 +32,8 @@ test.skip('renders with ColorMode component', () => {
     modes: {
       dark: {
         primary: 'magenta',
-      }
-    }
+      },
+    },
   }
   const root = renderer.create(
     wrapRootElement(

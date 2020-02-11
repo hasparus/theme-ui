@@ -8,7 +8,7 @@ export const get = (obj, key, def, p, undef) => {
 
 const defaultBreakpoints = [40, 52, 64].map(n => n + 'em')
 
-const defaultTheme = {
+export const __defaultTheme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],
 }
@@ -176,7 +176,7 @@ const responsive = styles => theme => {
 }
 
 export const css = args => (props = {}) => {
-  const theme = { ...defaultTheme, ...(props.theme || props) }
+  const theme = { ...__defaultTheme, ...(props.theme || props) }
   let result = {}
   const obj = typeof args === 'function' ? args(theme) : args
   const styles = responsive(obj)(theme)

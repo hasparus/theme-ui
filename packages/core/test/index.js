@@ -4,13 +4,7 @@ import renderer from 'react-test-renderer'
 import { render, fireEvent, cleanup, act } from '@testing-library/react'
 import { matchers } from 'jest-emotion'
 import mockConsole from 'jest-mock-console'
-import {
-  jsx,
-  Context,
-  useThemeUI,
-  merge,
-  ThemeProvider,
-} from '../src'
+import { jsx, Context, useThemeUI, merge, ThemeProvider } from '../src'
 
 afterEach(cleanup)
 
@@ -64,7 +58,7 @@ describe('ThemeProvider', () => {
         )
       )
     )
-    expect(theme).toHaveBeenCalledWith(outer)
+    expect(theme).toHaveBeenCalledWith(expect.objectContaining(outer))
     expect(json).toHaveStyleRule('color', 'text')
   })
 
@@ -104,20 +98,21 @@ describe('ThemeProvider', () => {
       cards: {
         default: {
           border: t => `1px solid ${t.colors.primary}`,
-        }
-      }
+        },
+      },
     }
     const json = renderJSON(
-      jsx(ThemeProvider, { theme },
+      jsx(
+        ThemeProvider,
+        { theme },
         jsx('div', {
           sx: {
             variant: 'cards.default',
-          }
+          },
         })
       )
     )
     expect(json).toHaveStyleRule('border', '1px solid tomato')
-
   })
 })
 
@@ -151,13 +146,15 @@ describe('jsx', () => {
 
   test('css prop accepts functions', () => {
     const json = renderJSON(
-      jsx(ThemeProvider, {
-        theme: {
-          colors: {
-            primary: 'tomato',
-          }
-        }
-      },
+      jsx(
+        ThemeProvider,
+        {
+          theme: {
+            colors: {
+              primary: 'tomato',
+            },
+          },
+        },
         jsx('div', {
           css: t => ({
             color: t.colors.primary,
@@ -327,18 +324,23 @@ describe('merge', () => {
 
 // describe('Context', () => {})
 describe('useThemeUI', () => {
+  let context
+  const GetContext = props => {
+    context = useThemeUI()
+    return false
+  }
+
+  beforeEach(() => {
+    context = undefined
+  })
+
   test('returns theme context', () => {
-    let context
-    const GetContext = props => {
-      context = useThemeUI()
-      return false
-    }
     renderJSON(
       <ThemeProvider
         theme={{
           colors: {
             text: 'tomato',
-          }
+          },
         }}>
         <GetContext />
       </ThemeProvider>
@@ -346,5 +348,28 @@ describe('useThemeUI', () => {
     expect(context).toBeTruthy()
     expect(context.theme.colors.text).toBe('tomato')
   })
-})
 
+  test('returned theme has defaults', () => {
+    renderJSON(
+      <ThemeProvider theme={{}}>
+        <GetContext />
+      </ThemeProvider>
+    )
+    expect(context.theme.space).toBeInstanceOf(Array)
+    expect(typeof context.theme.space[0] === 'number').toBe(true)
+    expect(context.theme.fontSizes).toBeInstanceOf(Array)
+    expect(context.theme.fontSizes[0]).toBeGreaterThan(0)
+  })
+
+  test('returned theme defaults can be overriden', () => {
+    const space = [Math.random(), Math.random()]
+    renderJSON(
+      <ThemeProvider theme={{ space }}>
+        <GetContext />
+      </ThemeProvider>
+    )
+    expect(context.theme.space).toStrictEqual(space)
+    expect(context.theme.fontSizes).toBeInstanceOf(Array)
+    expect(context.theme.fontSizes[0]).toBeGreaterThan(0)
+  })
+})

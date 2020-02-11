@@ -140,7 +140,7 @@ test('functional themes receive outer theme', () => {
       )
     )
   )
-  expect(theme).toHaveBeenCalledWith(outer)
+  expect(theme).toHaveBeenCalledWith(expect.objectContaining(outer))
   expect(json).toHaveStyleRule('color', 'text')
 })
 

@@ -1,8 +1,5 @@
-import {
-  jsx as emotion,
-  ThemeContext as EmotionContext,
-} from '@emotion/core'
-import { css, get } from '@theme-ui/css'
+import { jsx as emotion, ThemeContext as EmotionContext } from '@emotion/core'
+import { css, __defaultTheme } from '@theme-ui/css'
 import React from 'react'
 import deepmerge from 'deepmerge'
 import { version as __EMOTION_VERSION__ } from '@emotion/core/package.json'
@@ -61,17 +58,15 @@ merge.all = (...args) => deepmerge.all(args, { isMergeableObject, arrayMerge })
 
 const BaseProvider = ({ context, children }) =>
   jsx(
-    EmotionContext.Provider, { value: context.theme },
+    EmotionContext.Provider,
+    { value: context.theme },
     jsx(Context.Provider, {
       value: context,
-      children
+      children,
     })
   )
 
-export const ThemeProvider = ({
-  theme,
-  children
-}) => {
+export const ThemeProvider = ({ theme, children }) => {
   const outer = useThemeUI()
 
   if (process.env.NODE_ENV !== 'production') {
@@ -84,12 +79,16 @@ export const ThemeProvider = ({
     }
   }
 
-  const context = typeof theme === 'function'
-    ? { ...outer, theme: theme(outer.theme) }
-    : merge.all({}, outer, { theme })
+  const { theme: outerTheme, ...outerRest } = outer || {}
+  const outerThemeWithDefaults = { ...__defaultTheme, ...outerTheme }
+
+  const context =
+    typeof theme === 'function'
+      ? { ...outerRest, theme: theme(outerThemeWithDefaults) }
+      : merge.all({}, outerRest, { theme: outerThemeWithDefaults }, { theme })
 
   return jsx(BaseProvider, {
     context,
-    children
+    children,
   })
 }
