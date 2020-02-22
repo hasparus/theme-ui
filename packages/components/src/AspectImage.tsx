@@ -1,16 +1,16 @@
 import React from 'react'
 import { AspectRatio } from './AspectRatio'
 import { Image, ImageProps } from './Image'
-import { ForwardRef } from './Box'
+import { ForwardRef } from './types'
 
 interface AspectImageProps extends ImageProps {
   ratio?: number
 }
+
 /**
  * Image component constrained by as aspect ratio.
  * @see https://theme-ui.com/components/aspect-image
  */
-
 export const AspectImage: ForwardRef<
   HTMLImageElement,
   AspectImageProps

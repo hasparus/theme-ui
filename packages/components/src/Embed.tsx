@@ -1,5 +1,6 @@
 import React from 'react'
-import Box, { BoxProps, ForwardRef } from './Box'
+import Box, { BoxProps } from './Box'
+import { ForwardRef } from './types'
 
 export interface EmbedProps extends BoxProps {
   ratio?: number

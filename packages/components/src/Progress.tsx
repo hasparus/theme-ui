@@ -1,12 +1,13 @@
 import React from 'react'
-import Box, { Assign, BoxOwnProps, ForwardRef } from './Box'
+import Box, { BoxOwnProps } from './Box'
+import { Assign, ForwardRef } from './types'
 
 export interface ProgressProps
   extends Assign<React.ComponentProps<'progress'>, BoxOwnProps> {}
+
 /**
  * @see https://theme-ui.com/components/progress/
  */
-
 export const Progress: ForwardRef<
   HTMLProgressElement,
   ProgressProps

@@ -1,33 +1,32 @@
 import styled from '@emotion/styled'
-import { css, get } from '@theme-ui/css'
+import {
+  css,
+  get,
+  SystemCssProperties,
+  Theme,
+  SystemStyleObject,
+} from '@theme-ui/css'
+// @ts-ignore
 import { createShouldForwardProp } from '@styled-system/should-forward-prop'
+// @ts-ignore
 import space from '@styled-system/space'
+// @ts-ignore
 import color from '@styled-system/color'
-
 import { StyledComponent } from '@emotion/styled'
-import { InterpolationWithTheme } from '@emotion/core'
-import { SxStyleProp } from 'theme-ui'
+import { InterpolationWithTheme, ObjectInterpolation } from '@emotion/core'
 import { SpaceProps, ColorProps } from 'styled-system'
+import { SxStyleProp } from '@theme-ui/core'
 
-export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
-
-export type Assign<T, U> = {
-  [P in keyof (T & U)]: P extends keyof T
-    ? T[P]
-    : P extends keyof U
-    ? U[P]
-    : never
-}
-
-export type ForwardRef<T, P> = React.ForwardRefExoticComponent<
-  React.PropsWithoutRef<P> & React.RefAttributes<T>
->
+import { Assign } from './types'
 
 export interface BoxOwnProps extends SpaceProps, ColorProps {
   as?: React.ElementType
   variant?: string
   sx?: SxStyleProp
   css?: InterpolationWithTheme<any>
+  /**
+   * @internal
+   */
   __themeKey?: string //TODO is __themeKey a "keyof / typeof" from the theme spec?
 }
 
@@ -44,10 +43,14 @@ const shouldForwardProp = createShouldForwardProp([
   ...color.propNames,
 ])
 
-const sx = props => css(props.sx)(props.theme)
-const base = props => css(props.__css)(props.theme)
-const variant = ({ theme, variant, __themeKey = 'variants' }) =>
-  css(get(theme, __themeKey + '.' + variant, get(theme, variant)))
+const sx = (props: { sx?: SystemStyleObject; theme?: Theme }) =>
+  css(props.sx)(props.theme) as ObjectInterpolation<any>
+const base = (props: { __css?: SystemCssProperties; theme?: Theme }) =>
+  css(props.__css)(props.theme) as ObjectInterpolation<any>
+const variant = ({ theme, variant, __themeKey = 'variants' }: any) =>
+  css(
+    get(theme, __themeKey + '.' + variant, get(theme, variant))
+  ) as () => ObjectInterpolation<any>
 
 export const Box: StyledComponent<
   React.ComponentProps<'div'>,
@@ -66,7 +69,7 @@ export const Box: StyledComponent<
   space,
   color,
   sx,
-  props => props.css
+  (props: any) => props.css
 )
 
 export default Box

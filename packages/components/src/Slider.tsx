@@ -1,5 +1,5 @@
 import React from 'react'
-import Box, { Assign, BoxOwnProps, ForwardRef } from './Box'
+import Box, { BoxOwnProps } from './Box'
 
 export interface SliderProps
   extends Assign<React.ComponentProps<'input'>, BoxOwnProps> {}

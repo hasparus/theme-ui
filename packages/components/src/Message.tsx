@@ -1,14 +1,15 @@
 import React from 'react'
-import Box, { BoxProps, ForwardRef } from './Box'
+import Box, { BoxProps } from './Box'
+import { ForwardRef } from './types'
 
 export type MessageProps = BoxProps
+
 /**
  * Styled Box component for callouts and inline messages
  *
  * Message variants can be defined in the theme.messages object.
  * @see https://theme-ui.com/components/message
  */
-
 export const Message: ForwardRef<
   HTMLDivElement,
   MessageProps

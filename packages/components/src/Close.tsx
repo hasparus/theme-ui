@@ -1,6 +1,6 @@
 import React from 'react'
 import { IconButton, IconButtonProps } from './IconButton'
-import { ForwardRef } from './Box'
+import { ForwardRef } from './types'
 
 interface CloseProps extends Omit<IconButtonProps, 'children'> {}
 /**

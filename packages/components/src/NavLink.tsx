@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link, LinkProps } from './Link'
-import { ForwardRef } from './Box'
+import { ForwardRef } from './types'
 
 export type NavLinkProps = LinkProps
+
 /**
  * Link component for use in navigation
  *

@@ -1,5 +1,6 @@
 import React from 'react'
-import Box, { BoxOwnProps, ForwardRef } from './Box'
+import Box, { BoxOwnProps } from './Box'
+import { ForwardRef } from './types'
 
 export interface DonutProps
   extends Omit<

@@ -1,5 +1,7 @@
 import React from 'react'
-import Box, { Assign, BoxOwnProps, ForwardRef } from './Box'
+
+import Box, { BoxOwnProps } from './Box'
+import { Assign, ForwardRef } from './types'
 
 export interface TextareaProps
   extends Assign<React.ComponentProps<'textarea'>, BoxOwnProps> {}

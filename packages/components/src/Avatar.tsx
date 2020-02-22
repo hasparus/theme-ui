@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, ImageProps } from './Image'
-import { ForwardRef } from './Box'
+import { ForwardRef } from './types'
 
 interface AvatarProps extends ImageProps {
   size?: number | string

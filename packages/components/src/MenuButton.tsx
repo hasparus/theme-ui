@@ -1,6 +1,7 @@
 import React from 'react'
-import Box, { ForwardRef } from './Box'
+import Box from './Box'
 import { IconButton, IconButtonProps } from './IconButton'
+import { ForwardRef } from './types'
 
 export interface MenuButtonProps extends IconButtonProps {
   size?: number | string

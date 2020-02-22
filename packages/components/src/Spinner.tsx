@@ -1,6 +1,7 @@
 import React from 'react'
 import { keyframes } from '@emotion/core'
-import Box, { BoxOwnProps, ForwardRef, Omit } from './Box'
+import Box, { BoxOwnProps } from './Box'
+import { ForwardRef } from './types'
 
 export interface SpinnerProps
   extends Omit<

@@ -1,7 +1,8 @@
 import React from 'react'
-import Box, { Assign, BoxOwnProps, ForwardRef } from './Box'
-import SVG from './SVG'
+import Box, { BoxOwnProps } from './Box'
+import SVG, { SVGProps } from './SVG'
 import { getMargin, omitMargin } from './util'
+import { Assign, ForwardRef } from './types'
 
 export interface SelectProps
   extends Assign<React.ComponentProps<'select'>, BoxOwnProps> {}
@@ -11,7 +12,7 @@ export interface SelectProps
  * @see https://theme-ui.com/components/select/
  */
 
-const DownArrow = props => (
+const DownArrow = (props: SVGProps) => (
   <SVG {...props}>
     <path d="M7 10l5 5 5-5z" />
   </SVG>
