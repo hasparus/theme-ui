@@ -5,13 +5,6 @@ import { Assign, ForwardRef } from './types'
 
 export interface RadioProps
   extends Assign<React.ComponentProps<'input'>, BoxOwnProps> {}
-/**
- * Form radio input component
- *
- * Radio variants can be defined in `theme.forms` and the
- * component uses the `theme.forms.radio variant` by default.
- * @see https://theme-ui.com/components/radio/
- */
 
 const RadioChecked = (props: any) => (
   <SVG {...props}>
@@ -48,6 +41,13 @@ const RadioIcon = (props: any) => (
   </React.Fragment>
 )
 
+/**
+ * Form radio input component
+ *
+ * Radio variants can be defined in `theme.forms` and the
+ * component uses the `theme.forms.radio variant` by default.
+ * @see https://theme-ui.com/components/radio/
+ */
 export const Radio: ForwardRef<HTMLInputElement, RadioProps> = React.forwardRef(
   ({ className, sx, variant = 'radio', ...props }, ref) => (
     <Box>
