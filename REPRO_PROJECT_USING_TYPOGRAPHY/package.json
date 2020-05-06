@@ -1,0 +1,10 @@
+{
+  "name": "REPRO_PROJECT_USING_TYPOGRAPHY",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@theme-ui/typography": "..\\packages\\typography\\theme-ui-typography-v0.4.0-alpha.0.tgz",
+    "@types/compass-vertical-rhythm": "^1.4.0"
+  }
+}
