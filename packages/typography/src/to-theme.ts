@@ -1,10 +1,9 @@
 // custom implementation of typography.js for use in theme-ui
-import verticalRhythm from 'compass-vertical-rhythm'
+import verticalRhythm, { VerticalRhythmOptions, VerticalRhythm }  from 'compass-vertical-rhythm'
 import ms from 'modularscale'
 import styles from './styles'
 
 import type { TypographyOptions } from 'typography'
-import type { VerticalRhythmOptions, VerticalRhythm } from 'compass-vertical-rhythm'
 import type { Merge } from 'type-fest'
 
 const unwantedTypographyOptions = [
