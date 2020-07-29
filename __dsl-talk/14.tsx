@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from 'theme-ui'
 
-const BlueBox = () => {
+const NotInCanSaSAnymore = () => {
   return (
     <div
       sx={{
