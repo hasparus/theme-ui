@@ -12,7 +12,7 @@ const heading = {
   fontWeight: 'heading',
 }
 
-const baseStyles: ThemeStyles = {
+const baseStyles: any = {
   root: {
     fontFamily: 'body',
     fontSize: 2,
