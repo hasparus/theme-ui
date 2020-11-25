@@ -4,8 +4,12 @@ import {
   ThemeDerivedStyles,
   Theme,
   ThemeUICSSObject,
+  FinalTheme,
 } from './types'
+import { scales, Scales } from './scales'
 
+export { scales } from './scales';
+export type { Scales } from './scales'
 export * from './types'
 
 export function get(
@@ -58,139 +62,6 @@ export const multiples = {
   size: ['width', 'height'],
 }
 
-export const scales = {
-  color: 'colors',
-  backgroundColor: 'colors',
-  borderColor: 'colors',
-  caretColor: 'colors',
-  columnRuleColor: 'colors',
-  opacity: 'opacities',
-  transition: 'transitions',
-  margin: 'space',
-  marginTop: 'space',
-  marginRight: 'space',
-  marginBottom: 'space',
-  marginLeft: 'space',
-  marginX: 'space',
-  marginY: 'space',
-  marginBlock: 'space',
-  marginBlockEnd: 'space',
-  marginBlockStart: 'space',
-  marginInline: 'space',
-  marginInlineEnd: 'space',
-  marginInlineStart: 'space',
-  padding: 'space',
-  paddingTop: 'space',
-  paddingRight: 'space',
-  paddingBottom: 'space',
-  paddingLeft: 'space',
-  paddingX: 'space',
-  paddingY: 'space',
-  paddingBlock: 'space',
-  paddingBlockEnd: 'space',
-  paddingBlockStart: 'space',
-  paddingInline: 'space',
-  paddingInlineEnd: 'space',
-  paddingInlineStart: 'space',
-  scrollPadding: 'space',
-  scrollPaddingTop: 'space',
-  scrollPaddingRight: 'space',
-  scrollPaddingBottom: 'space',
-  scrollPaddingLeft: 'space',
-  scrollPaddingX: 'space',
-  scrollPaddingY: 'space',
-  inset: 'space',
-  insetBlock: 'space',
-  insetBlockEnd: 'space',
-  insetBlockStart: 'space',
-  insetInline: 'space',
-  insetInlineEnd: 'space',
-  insetInlineStart: 'space',
-  top: 'space',
-  right: 'space',
-  bottom: 'space',
-  left: 'space',
-  gridGap: 'space',
-  gridColumnGap: 'space',
-  gridRowGap: 'space',
-  gap: 'space',
-  columnGap: 'space',
-  rowGap: 'space',
-  fontFamily: 'fonts',
-  fontSize: 'fontSizes',
-  fontWeight: 'fontWeights',
-  lineHeight: 'lineHeights',
-  letterSpacing: 'letterSpacings',
-  border: 'borders',
-  borderTop: 'borders',
-  borderRight: 'borders',
-  borderBottom: 'borders',
-  borderLeft: 'borders',
-  borderWidth: 'borderWidths',
-  borderStyle: 'borderStyles',
-  borderRadius: 'radii',
-  borderTopRightRadius: 'radii',
-  borderTopLeftRadius: 'radii',
-  borderBottomRightRadius: 'radii',
-  borderBottomLeftRadius: 'radii',
-  borderTopWidth: 'borderWidths',
-  borderTopColor: 'colors',
-  borderTopStyle: 'borderStyles',
-  borderBottomWidth: 'borderWidths',
-  borderBottomColor: 'colors',
-  borderBottomStyle: 'borderStyles',
-  borderLeftWidth: 'borderWidths',
-  borderLeftColor: 'colors',
-  borderLeftStyle: 'borderStyles',
-  borderRightWidth: 'borderWidths',
-  borderRightColor: 'colors',
-  borderRightStyle: 'borderStyles',
-  borderBlock: 'borders',
-  borderBlockEnd: 'borders',
-  borderBlockEndStyle: 'borderStyles',
-  borderBlockEndWidth: 'borderWidths',
-  borderBlockStart: 'borders',
-  borderBlockStartStyle: 'borderStyles',
-  borderBlockStartWidth: 'borderWidths',
-  borderBlockStyle: 'borderStyles',
-  borderBlockWidth: 'borderWidths',
-  borderEndEndRadius: 'radii',
-  borderEndStartRadius: 'radii',
-  borderInline: 'borders',
-  borderInlineEnd: 'borders',
-  borderInlineEndStyle: 'borderStyles',
-  borderInlineEndWidth: 'borderWidths',
-  borderInlineStart: 'borders',
-  borderInlineStartStyle: 'borderStyles',
-  borderInlineStartWidth: 'borderWidths',
-  borderInlineStyle: 'borderStyles',
-  borderInlineWidth: 'borderWidths',
-  borderStartEndRadius: 'radii',
-  borderStartStartRadius: 'radii',
-  outlineColor: 'colors',
-  boxShadow: 'shadows',
-  textShadow: 'shadows',
-  zIndex: 'zIndices',
-  width: 'sizes',
-  minWidth: 'sizes',
-  maxWidth: 'sizes',
-  height: 'sizes',
-  minHeight: 'sizes',
-  maxHeight: 'sizes',
-  flexBasis: 'sizes',
-  size: 'sizes',
-  blockSize: 'sizes',
-  inlineSize: 'sizes',
-  maxBlockSize: 'sizes',
-  maxInlineSize: 'sizes',
-  minBlockSize: 'sizes',
-  minInlineSize: 'sizes',
-  // svg
-  fill: 'colors',
-  stroke: 'colors',
-} as const
-type Scales = typeof scales
-
 const positiveOrNegative = (scale: object, value: string | number) => {
   if (typeof value !== 'number' || value >= 0) {
     if (typeof value === 'string' && value.startsWith('-')) {
@@ -234,7 +105,7 @@ const transforms = [
 
 const responsive = (
   styles: Exclude<ThemeUIStyleObject, ThemeDerivedStyles>
-) => (theme?: Theme) => {
+) => (theme: FinalTheme) => {
   const next: Exclude<ThemeUIStyleObject, ThemeDerivedStyles> = {}
   const breakpoints =
     (theme && (theme.breakpoints as string[])) || defaultBreakpoints
@@ -247,7 +118,7 @@ const responsive = (
     const key = k as keyof typeof styles
     let value = styles[key]
     if (typeof value === 'function') {
-      value = value(theme || {})
+      value = value(theme)
     }
 
     if (value == null) continue
@@ -269,19 +140,20 @@ const responsive = (
   return next
 }
 
-type CssPropsArgument = { theme: Theme } | Theme
+type CssPropsArgument = { theme?: FinalTheme } | FinalTheme
 
 export const css = (args: ThemeUIStyleObject = {}) => (
   props: CssPropsArgument = {}
 ): CSSObject => {
-  const theme: Theme = {
+  const theme = {
     ...defaultTheme,
     ...('theme' in props ? props.theme : props),
-  }
+  } as FinalTheme
   let result: CSSObject = {}
   let obj = typeof args === 'function' ? args(theme) : args
   // insert variant props before responsive styles, so they can be merged
   if (obj['variant']) {
+    // Type instantiation is excessively deep and possibly infinite.ts(2589)
     obj = { ...get(theme, obj['variant']), ...obj }
     delete obj['variant'];
   }
