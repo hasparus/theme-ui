@@ -39,7 +39,7 @@ export type CSSPseudoSelectorProps = { [K in CSS.Pseudos]?: ThemeUIStyleObject }
 
 /**
  * Can be augmented by users to inject their exact theme into Theme UI types.
- * @see TODO LINK TO THE DOCS
+ * @see https://theme-ui.com/guides/typescript#extending-the-theme
  */
 export interface UserTheme {}
 

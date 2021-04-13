@@ -10,56 +10,68 @@ While most APIs in Theme UI should _just work_ in TypeScript,
 there are a few advanced use cases which will differ slightly.
 This guide is intended to cover those use cases.
 
-## Exact theme type
+## Extending the Theme
 
-The [`Theme` type](/theme-spec) represents all possible themes.
-
-It might be what you need when you're writing a library of reusable components
-or an app where the theme object is provided by the user and kept in the database.
-However, it's not the most convenient way to think about the theme,
-when building a blog or a landing page.
-
-To know the exact type of your particular theme on type level,
-you can use an identity "constructor" function to narrow the type.
+If you need additional properties in the theme object,
+you can add them with [module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation).
 
 ```tsx
-const makeTheme = <T extends Theme>(t: T) => t
+import { makeTheme } from 'theme-ui'
 
 const theme = makeTheme({
   colors: {
-    background: 'white',
-    text: 'black',
-    blue: {
-      light: '#187abf',
-      dark: '#235a97',
-    },
+    primary: 'red',
+    'primary-dark': 'darkred',
+    'primary-light': 'pink'
   },
 })
 
-export type ExactTheme = typeof theme
-
-// No error
-const lightBlue = theme.colors.blue.light
+export type MyTheme = typeof theme;
 ```
 
-You can then reexport `useThemeUI` hook with narrowed type.
+custom d.ts file:
+
+```ts
+import { MyTheme } from '~/myCustomTheme'
+
+declare module '@theme-ui/css' {
+  interface UserTheme extends MyTheme {}
+}
+```
+
+Theme UI’s `Theme` interface will automatically pick up customizations to the
+internal `UserTheme` so you will be free to reference your custom properties:
+
+```ts
+import { css } from 'theme-ui'
+
+const primaryDarkColor = css({
+  color: 'primary-dark' // auto-completes and no error
+})
+```
+
+or
 
 ```tsx
-import { ContextValue } from 'theme-ui'
+/** @jsxImportSource theme-ui */
 
-interface ExactContextValue extends Omit<ContextValue, 'theme'> {
-  theme: ExactTheme
-}
+const H2 = () => <h2 sx={{ color: 'primary' }}>primary heading</h2>
+````
 
-export const useTheme = (useThemeUI as unknown) as () => ExactContextValue
-```
+When accessing the theme, you can use the `get` helper to avoid having
+excessive optional chaining when accessing theme properties. This
+can be useful if your theme is dynamically constructed at runtime,
+and the exact shape cannot be guaranteed.
 
-_[Try it on CodeSandbox.](https://codesandbox.io/s/theme-ui-typescript-tips-yh8u1?file=/src/exact-theme-type.ts)_
+## Accessing properties
 
-## Accessing optional properties
+Because all default properties of `Theme` are optional,
+accessing them requires the usage of a [`get` function](/api#get) or conditional chaining.
+You can let Theme UI know about [your exact theme type](#extending-the-theme),
+so you don't have to use `get` nor `.?` operator.
 
-Because all properties of `Theme` are optional,
-accessing them requires usage of [`get` function](/api#get).
+This is also useful when the theme object is provided by the user and kept in the database,
+or in general only known at runtime.
 
 ```tsx
 /** @jsxImportSource theme-ui */
@@ -83,6 +95,21 @@ import { Theme, get } from 'theme-ui'
 return <div sx={{ size: (t) => get(t, 'space.3') + get(t, 'sizes.5') }} />
 ```
 
+Or with the `useThemeUI` hook:
+
+```tsx
+/** @jsxImportSource theme-ui */
+
+import { get, useThemeUI } from 'theme-ui'
+
+const CustomComponent = () => {
+  const { theme } = useThemeUI();
+  const primaryDark = get(theme, 'colors.primary-dark')
+  // primaryDark === 'darkred'
+  // ...
+}
+```
+
 Properties of scales can be accessed with optional chaining.
 Values under numeric keys can be accessed with bracket notation.
 
@@ -93,37 +120,12 @@ const parse = (x: unknown) => parseInt(String(x))
 
 return (
   <div sx={{
-    size: size: (t) => parse(t.space?.[3]) + parse(t.sizes?.[5]) }}
+    size: (t) => parse(t.space?.[3]) + parse(t.sizes?.[5]) }}
   />
 )
 ```
 
 _[Try it on CodeSandbox.](https://codesandbox.io/s/theme-ui-typescript-tips-yh8u1?file=/src/App.tsx)_
-
-## Additional properties in the theme
-
-If you need additional properties in theme object,
-you can add them with [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces).
-
-```tsx
-interface MySyntaxHighlightingTheme {
-  foreground: string
-}
-
-declare module 'theme-ui' {
-  interface Theme {
-    syntaxHighlighting: MySyntaxHighlightingTheme
-  }
-}
-
-const theme: Theme = {
-  syntaxHighlighting: {
-    foreground: '#222',
-  },
-}
-
-const syntaxHighlighting = theme.syntaxHighlighting
-```
 
 _[Try it in TypeScript Playground.](https://www.typescriptlang.org/v2/en/play?#code/JYWwDg9gTgLgBAbzgFQBYFMTrgXzgMyghDgHIYMsBaAV2FIG4AoJ4AOxnSnwEMBjbAFkAngGVhHHgA8AEsADmqADYLUMdvLSZsCJnALR08ojTYATAFxwAzjCgbmOFmfR8lPKNhAQzNJdnJKdFp6RD04dk5ufmwtLDD9fWsJGGk5RRVFdTZ5KxFxSVlVTLUNOPRwpycmPgg2WzgKbStyuABeBJsUtOLVbNzO-XxDYwhTSzIAYgAmWdIAGkqmHGYauobkwvTlPo12xqCAOk3UoozdnLX6+C4iKH2mrGPhGDYe86yNJiA)_
 
